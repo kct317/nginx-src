@@ -7,7 +7,7 @@
 
 #include <ngx_config.h>
 #include <ngx_core.h>
-#include <nginx.h>
+#include <nginx.h> 
 
 
 static ngx_int_t ngx_add_inherited_sockets(ngx_cycle_t *cycle);
