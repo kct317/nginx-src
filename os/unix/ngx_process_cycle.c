@@ -360,6 +360,10 @@ ngx_start_worker_processes(ngx_cycle_t *cycle, ngx_int_t n, ngx_int_t type)
 
     ch.command = NGX_CMD_OPEN_CHANNEL;
 
+    /* 
+    ** create n worker processes.
+    ** cycle is a global val.
+    */
     for (i = 0; i < n; i++) {
 
         ngx_spawn_process(cycle, ngx_worker_process_cycle,
