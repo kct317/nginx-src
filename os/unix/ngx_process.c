@@ -93,7 +93,7 @@ ngx_spawn_process(ngx_cycle_t *cycle, ngx_spawn_proc_pt proc, void *data,
 
     /*
     ** look for the dead process. 
-    ** ngx_processes[i] store info of process
+    ** ngx_processes[s] store info of process
     */
     if (respawn >= 0) {
         s = respawn;
@@ -113,7 +113,9 @@ ngx_spawn_process(ngx_cycle_t *cycle, ngx_spawn_proc_pt proc, void *data,
         }
     }
 
-    /* check ngx_processes[s].channel */
+    /* 
+    ** check ngx_processes[s].channel 
+    */
     if (respawn != NGX_PROCESS_DETACHED) {
 
         /* Solaris 9 still has no AF_LOCAL */

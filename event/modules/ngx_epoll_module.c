@@ -577,7 +577,7 @@ ngx_epoll_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t flags)
                    "epoll timer: %M", timer);
 
     /*
-    ** events is the number of event 
+    ** events is the number of event
     ** timer is 500ms
     */
     events = epoll_wait(ep, event_list, (int) nevents, timer);
@@ -619,7 +619,7 @@ ngx_epoll_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t flags)
     ngx_mutex_lock(ngx_posted_events_mutex);
 
     for (i = 0; i < events; i++) {
-        /*  */
+        /* data.ptr contains the info of event and the recv_buffer */
         c = event_list[i].data.ptr;
 
         instance = (uintptr_t) c & 1;
