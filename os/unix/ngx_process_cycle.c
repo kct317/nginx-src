@@ -761,6 +761,7 @@ ngx_worker_process_cycle(ngx_cycle_t *cycle, void *data)
     ccf = (ngx_core_conf_t *) ngx_get_conf(cycle->conf_ctx, ngx_core_module);
 
     if (ngx_threads_n) {
+        /* set the size of thread stack */
         if (ngx_init_threads(ngx_threads_n, ccf->thread_stack_size, cycle)
             == NGX_ERROR)
         {
@@ -768,6 +769,7 @@ ngx_worker_process_cycle(ngx_cycle_t *cycle, void *data)
             exit(2);
         }
 
+        /* every threads have a same key */
         err = ngx_thread_key_create(&ngx_core_tls_key);
         if (err != 0) {
             ngx_log_error(NGX_LOG_ALERT, cycle->log, err,
@@ -992,8 +994,10 @@ ngx_worker_process_init(ngx_cycle_t *cycle, ngx_int_t worker)
         }
     }
 
+    /* 
+    ** ignore null signals is equal to accept all signals  
+    */
     sigemptyset(&set);
-
     if (sigprocmask(SIG_SETMASK, &set, NULL) == -1) {
         ngx_log_error(NGX_LOG_ALERT, cycle->log, ngx_errno,
                       "sigprocmask() failed");
@@ -1048,6 +1052,9 @@ ngx_worker_process_init(ngx_cycle_t *cycle, ngx_int_t worker)
     ngx_last_process = 0;
 #endif
 
+    /* 
+    ** add read event to socket ngx_channel
+    */
     if (ngx_add_channel_event(cycle, ngx_channel, NGX_READ_EVENT,
                               ngx_channel_handler)
         == NGX_ERROR)

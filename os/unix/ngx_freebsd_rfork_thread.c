@@ -200,6 +200,9 @@ ngx_init_threads(int n, size_t size, ngx_cycle_t *cycle)
         }
     }
 
+    /*
+    ** to get the address of user's stack
+    */
     len = sizeof(ngx_freebsd_kern_usrstack);
     if (sysctlbyname("kern.usrstack", &ngx_freebsd_kern_usrstack, &len,
                                                                 NULL, 0) == -1)
