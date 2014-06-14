@@ -245,9 +245,7 @@ ngx_process_events_and_timers(ngx_cycle_t *cycle)
 
     delta = ngx_current_msec;
 
-    /*
-    ** call function process the events 
-    */
+    /* ngx_epoll_process_events() */
     (void) ngx_process_events(cycle, timer, flags);
 
     delta = ngx_current_msec - delta;
@@ -255,6 +253,7 @@ ngx_process_events_and_timers(ngx_cycle_t *cycle)
     ngx_log_debug1(NGX_LOG_DEBUG_EVENT, cycle->log, 0,
                    "timer delta: %M", delta);
 
+    /* 处理ngx_posted_accept_events队列的事件 */
     if (ngx_posted_accept_events) {
         ngx_event_process_posted(cycle, &ngx_posted_accept_events);
     }
@@ -272,6 +271,7 @@ ngx_process_events_and_timers(ngx_cycle_t *cycle)
 
     if (ngx_posted_events) {
         if (ngx_threaded) {
+            /* 侧面暗示线程池是用来处理ngx_posted_events的事件 */
             ngx_wakeup_worker_thread(cycle);
 
         } else {

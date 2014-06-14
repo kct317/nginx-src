@@ -17,7 +17,9 @@ ngx_thread_volatile ngx_event_t  *ngx_posted_events;
 ngx_mutex_t                      *ngx_posted_events_mutex;
 #endif
 
-
+/*
+** 将队列的事件提出，并处理掉
+*/
 void
 ngx_event_process_posted(ngx_cycle_t *cycle,
     ngx_thread_volatile ngx_event_t **posted)
@@ -44,6 +46,9 @@ ngx_event_process_posted(ngx_cycle_t *cycle,
 
 #if (NGX_THREADS) && !(NGX_WIN32)
 
+/*
+** 唤醒一个空闲线程
+*/
 void
 ngx_wakeup_worker_thread(ngx_cycle_t *cycle)
 {
@@ -83,7 +88,9 @@ ngx_wakeup_worker_thread(ngx_cycle_t *cycle)
     }
 }
 
-
+/*
+** 将ngx_posted_events队列的事件提取，并处理掉
+*/
 ngx_int_t
 ngx_event_thread_process_posted(ngx_cycle_t *cycle)
 {

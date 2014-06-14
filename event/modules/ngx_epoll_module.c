@@ -616,6 +616,7 @@ ngx_epoll_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t flags)
         return NGX_ERROR;
     }
 
+    /* lock the whole 'for' loop */
     ngx_mutex_lock(ngx_posted_events_mutex);
 
     for (i = 0; i < events; i++) {
@@ -624,6 +625,10 @@ ngx_epoll_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t flags)
         /* why set the last position bit to zero ? */
         instance = (uintptr_t) c & 1;
         c = (ngx_connection_t *) ((uintptr_t) c & (uintptr_t) ~1);
+
+        /*
+        ** the follow contain read and write 2 situations  
+        */
 
         rev = c->read;
 
@@ -699,7 +704,6 @@ ngx_epoll_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t flags)
         }
 
         wev = c->write;
-
         /* write event */
         if ((revents & EPOLLOUT) && wev->active) {
 
@@ -723,6 +727,7 @@ ngx_epoll_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t flags)
             }
 
             if (flags & NGX_POST_EVENTS) {
+                /* enqueue */
                 ngx_locked_post_event(wev, &ngx_posted_events);
 
             } else {
