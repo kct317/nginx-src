@@ -1316,7 +1316,7 @@ ngx_worker_thread_cycle(void *data)
 
         if (ngx_terminate) {
             thr->state = NGX_THREAD_EXIT;
-
+            /* unlock */
             ngx_mutex_unlock(ngx_posted_events_mutex);
 
             ngx_log_debug1(NGX_LOG_DEBUG_CORE, cycle->log, 0,

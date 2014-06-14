@@ -621,7 +621,7 @@ ngx_epoll_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t flags)
     for (i = 0; i < events; i++) {
         /* data.ptr contains the info of event and the recv_buffer */
         c = event_list[i].data.ptr;
-
+        /* why set the last position bit to zero ? */
         instance = (uintptr_t) c & 1;
         c = (ngx_connection_t *) ((uintptr_t) c & (uintptr_t) ~1);
 
@@ -630,9 +630,9 @@ ngx_epoll_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t flags)
         if (c->fd == -1 || rev->instance != instance) {
 
             /*
-             * the stale event from a file descriptor
-             * that was just closed in this iteration
-             */
+            ** the stale event from a file descriptor
+            ** that was just closed in this iteration
+            */
 
             ngx_log_debug1(NGX_LOG_DEBUG_EVENT, cycle->log, 0,
                            "epoll: stale event %p", c);
@@ -690,7 +690,7 @@ ngx_epoll_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t flags)
             if (flags & NGX_POST_EVENTS) {
                 queue = (ngx_event_t **) (rev->accept ?
                                &ngx_posted_accept_events : &ngx_posted_events);
-
+                /* enqueue */
                 ngx_locked_post_event(rev, queue);
 
             } else {

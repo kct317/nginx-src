@@ -72,6 +72,9 @@ ngx_wakeup_worker_thread(ngx_cycle_t *cycle)
     }
 #endif
 
+    /*
+    ** only pick one free thread to deal with events in posted 
+    */
     for (i = 0; i < ngx_threads_n; i++) {
         if (ngx_threads[i].state == NGX_THREAD_FREE) {
             ngx_cond_signal(ngx_threads[i].cv);
@@ -119,6 +122,7 @@ ngx_event_thread_process_posted(ngx_cycle_t *cycle)
                 *(ev->own_lock) = 1;
             }
 
+            /* dequeue */
             ngx_delete_posted_event(ev);
 
             ev->locked = 1;
@@ -141,10 +145,9 @@ ngx_event_thread_process_posted(ngx_cycle_t *cycle)
 #endif
             ev->posted_available = 0;
 
-            ngx_mutex_unlock(ngx_posted_events_mutex);
-
-            ev->handler(ev);
-
+            /* lock the process of handler event, cannot post event into event queue */
+            ngx_mutex_unlock(ngx_posted_events_mutex)
+            ev->handler(ev);  /* ngx_epoll_eventfd_handler() */
             ngx_mutex_lock(ngx_posted_events_mutex);
 
             if (ev->locked) {
