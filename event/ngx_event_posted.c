@@ -37,9 +37,9 @@ ngx_event_process_posted(ngx_cycle_t *cycle,
             return;
         }
 
-        ngx_delete_posted_event(ev);
+        ngx_delete_posted_event(ev);   /* 从链表中抽取一个event，并记录事件 */
 
-        ev->handler(ev);
+        ev->handler(ev);   /* 调用回调函数处理事件 */
     }
 }
 

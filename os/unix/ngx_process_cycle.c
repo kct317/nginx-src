@@ -149,6 +149,7 @@ ngx_master_process_cycle(ngx_cycle_t *cycle)
     sigio = 0;
     live = 1;
 
+    /* 主进程剩下的工作就是处理信号 */
     for ( ;; ) {
         if (delay) {
             if (ngx_sigalrm) {
@@ -1014,8 +1015,9 @@ ngx_worker_process_init(ngx_cycle_t *cycle, ngx_int_t worker)
         ls[i].previous = NULL;
     }
 
+    /* 进程初始化 */
     for (i = 0; ngx_modules[i]; i++) {
-        if (ngx_modules[i]->init_process) {
+        if (ngx_modules[i]->init_process) {   /* ngx_epoll_init() */
             if (ngx_modules[i]->init_process(cycle) == NGX_ERROR) {
                 /* fatal */
                 exit(2);

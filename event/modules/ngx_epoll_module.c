@@ -577,7 +577,9 @@ ngx_epoll_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t flags)
                    "epoll timer: %M", timer);
 
     /*
-    ** events is the number of event
+    ** event_list must be alloc memory of nevents in advance 
+    **      <epoll_event contain a sign number and event happen>
+    ** nevents is the number of event
     ** timer is 500ms
     */
     events = epoll_wait(ep, event_list, (int) nevents, timer);
@@ -620,15 +622,13 @@ ngx_epoll_process_events(ngx_cycle_t *cycle, ngx_msec_t timer, ngx_uint_t flags)
     ngx_mutex_lock(ngx_posted_events_mutex);
 
     for (i = 0; i < events; i++) {
-        /* data.ptr contains the info of event and the recv_buffer */
+        /*  */
         c = event_list[i].data.ptr;
         /* why set the last position bit to zero ? */
         instance = (uintptr_t) c & 1;
         c = (ngx_connection_t *) ((uintptr_t) c & (uintptr_t) ~1);
 
-        /*
-        ** the follow contain read and write 2 situations  
-        */
+        /* the follow contain 2 situations: read and write*/
 
         rev = c->read;
 
